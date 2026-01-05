@@ -248,6 +248,65 @@
         font-weight: 600;
       }
 
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(29, 27, 26, 0.35);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        z-index: 30;
+      }
+
+      .modal-backdrop.show {
+        display: flex;
+      }
+
+      .modal-card {
+        background: #fffaf6;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 24px;
+        width: min(520px, 100%);
+        box-shadow: 0 24px 48px rgba(30, 20, 12, 0.35);
+      }
+
+      .modal-card h3 {
+        margin: 0 0 8px;
+        font-size: 20px;
+        font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+      }
+
+      .modal-card p {
+        margin: 0 0 12px;
+        color: var(--muted);
+      }
+
+      .modal-card ol {
+        margin: 0 0 16px 18px;
+        padding: 0;
+        color: var(--ink);
+        line-height: 1.5;
+      }
+
+      .code-pill {
+        display: inline-block;
+        margin-top: 6px;
+        padding: 6px 10px;
+        border-radius: 10px;
+        background: #fff2e5;
+        border: 1px solid #f0d2bf;
+        font-family: "Courier New", Courier, monospace;
+        font-size: 13px;
+      }
+
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+      }
+
       .toast {
         position: fixed;
         right: 24px;
@@ -317,7 +376,7 @@
           <textarea class="hidden-field" id="download-html" name="html">{{ html | e }}</textarea>
           <button class="button primary" type="submit">Download HTML</button>
         </form>
-        <form id="vercel-zip-form" action="{{ url_for('download_vercel') }}" method="post">
+        <form id="vercel-zip-form" class="vercel-download-form" action="{{ url_for('download_vercel') }}" method="post">
           <textarea class="hidden-field" id="vercel-zip-html" name="html">{{ html | e }}</textarea>
           <button class="button" type="submit" title="Downloads a Vercel-ready zip with deploy instructions.">
             Deploy to Vercel
@@ -386,6 +445,24 @@
       </div>
     </section>
 
+    <div class="modal-backdrop" id="vercel-modal" aria-hidden="true">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="vercel-modal-title">
+        <h3 id="vercel-modal-title">Vercel deploy steps</h3>
+        <p>Unzip the downloaded bundle, then run the following commands:</p>
+        <ol>
+          <li>
+            <div class="code-pill">npx vercel</div>
+          </li>
+          <li>
+            <div class="code-pill">npx vercel --prod</div>
+          </li>
+        </ol>
+        <div class="modal-actions">
+          <button class="button" type="button" data-modal-close>Got it</button>
+        </div>
+      </div>
+    </div>
+
     <div class="toast" id="request-toast" role="status" aria-live="polite">
       Request sent. Updating HTML...
     </div>
@@ -403,6 +480,8 @@
       const vercelField = document.getElementById("vercel-api-html");
       const vercelPromptField = document.getElementById("vercel-prompt");
       const promptInput = document.getElementById("prompt-input");
+      const vercelModal = document.getElementById("vercel-modal");
+      let allowVercelDownload = false;
 
       if (toast && form) {
         const submitButton = form.querySelector("button[type='submit']");
@@ -435,17 +514,53 @@
         });
       }
 
-      if (vercelZipForm && vercelZipField && htmlOutput) {
-        vercelZipForm.addEventListener("submit", () => {
-          vercelZipField.value = htmlOutput.value;
-        });
-      }
-
       if (vercelForm && vercelField && htmlOutput) {
         vercelForm.addEventListener("submit", () => {
           vercelField.value = htmlOutput.value;
           if (vercelPromptField && promptInput) {
             vercelPromptField.value = promptInput.value;
+          }
+        });
+      }
+
+      if (vercelModal && vercelZipForm) {
+        const closeModal = () => {
+          vercelModal.classList.remove("show");
+          vercelModal.setAttribute("aria-hidden", "true");
+        };
+        const openModal = () => {
+          vercelModal.classList.add("show");
+          vercelModal.setAttribute("aria-hidden", "false");
+        };
+        const closeButton = vercelModal.querySelector("[data-modal-close]");
+
+        vercelZipForm.addEventListener("submit", (event) => {
+          if (vercelZipField && htmlOutput) {
+            vercelZipField.value = htmlOutput.value;
+          }
+          if (!allowVercelDownload) {
+            event.preventDefault();
+            openModal();
+          } else {
+            allowVercelDownload = false;
+          }
+        });
+
+        if (closeButton) {
+          closeButton.addEventListener("click", () => {
+            allowVercelDownload = true;
+            closeModal();
+            if (vercelZipForm.requestSubmit) {
+              vercelZipForm.requestSubmit();
+            } else {
+              vercelZipForm.submit();
+            }
+          });
+        }
+
+        vercelModal.addEventListener("click", (event) => {
+          if (event.target === vercelModal) {
+            closeModal();
           }
         });
       }

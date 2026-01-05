@@ -332,6 +332,7 @@ def download_vercel():
     with zipfile.ZipFile(zip_buffer, "w", compression=zipfile.ZIP_DEFLATED) as zip_file:
         zip_file.writestr("index.html", html)
         zip_file.writestr("README.txt", _build_vercel_readme())
+        zip_file.writestr(".env_example", "VERCEL_TOKEN=your_token_here\n")
 
     zip_buffer.seek(0)
     response = Response(zip_buffer.read(), mimetype="application/zip")
