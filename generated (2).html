@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: white;
+            color: black;
+        }
+        h1 {
+            color: black;
+            font-size: 48px;
+            margin: 0;
+        }
+        .search-container {
+            margin: 20px 0;
+        }
+        input[type="text"] {
+            width: 400px;
+            height: 40px;
+            border: 1px solid #000;
+            border-radius: 24px;
+            padding: 0 20px;
+            font-size: 16px;
+            background-color: #f9f9f9;
+            color: black;
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        .button {
+            background-color: #e0e0e0;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 14px;
+            cursor: pointer;
+            color: black;
+        }
+        .icon {
+            width: 24px;
+            height: 24px;
+            background-color: #dcdcdc;
+            display: inline-block;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .profile-icon {
+            width: 32px;
+            height: 32px;
+            background-color: #dcdcdc;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Google</h1>
+    <div class="search-container">
+        <input type="text" placeholder="搜尋 Google 或輸入網址">
+    </div>
+    <div class="button-container">
+        <button class="button"><span class="icon"></span> FB</button>
+        <button class="button">+</button>
+        <button class="button">新資訊</button>
+    </div>
+    <div class="profile-icon"></div>
+</body>
+</html>
