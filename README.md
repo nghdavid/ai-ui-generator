@@ -1,8 +1,40 @@
 # data_capstone
 
-Generate HTML/CSS from a screenshot or a text prompt, then optionally deploy the result to Vercel.
+AI-powered UI generation app that turns screenshots or text prompts into self-contained HTML/CSS, then optionally packages or deploys the result to Vercel.
+
+## Overview
+
+This project uses the OpenAI API to generate frontend UI code in two ways:
+
+- `Screenshot to HTML`: upload a UI screenshot and generate a matching single-file HTML page.
+- `Prompt to HTML`: describe a UI in natural language and generate the interface from text.
+- `Iterative AI refinement`: update generated HTML by submitting follow-up prompts that modify the existing output.
+
+The generated result is designed to be portable:
+
+- semantic HTML
+- embedded CSS in a single file
+- no external assets, libraries, or links required
+
+## AI Features
+
+- Multimodal generation from uploaded screenshots
+- Natural-language UI generation from text prompts
+- Prompt-driven editing of existing HTML outputs
+- Constrained generation for clean, self-contained frontend code
+- Fast export and optional deployment flow for generated pages
+
+## Tech Stack
+
+- Python
+- Flask
+- OpenAI API
+- HTML/CSS
+- Vercel Deployment API
 
 ## Setup
+
+Create and activate a virtual environment, then install dependencies:
 
 ```bash
 python -m venv .venv
@@ -10,52 +42,89 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Copy the example env file and fill in your keys (optional):
+Copy the example environment file and add your credentials if needed:
 
 ```bash
 cp .env_example .env
 ```
 
-## Run
+## Environment Variables
+
+- `OPENAI_API_KEY`: required for AI HTML generation
+- `OPENAI_MODEL`: optional, defaults to `gpt-4o-mini`
+- `VERCEL_TOKEN`: optional, used for API deployment
+- `FLASK_SECRET_KEY`: optional, used by Flask
+
+## Run Locally
 
 ```bash
 python app.py
 ```
 
-Open: http://localhost:3000
+Open [http://localhost:3000](http://localhost:3000)
 
-## Usage
+## How It Works
 
-- Screenshot to HTML: upload a PNG/JPG/WEBP on the home page.
-- Prompt to HTML: click “Generate UI HTML from prompt”.
-- Edit and refine: use the prompt update on the results page.
+### 1. Generate HTML from a Screenshot
 
-## Vercel Deploy Options
+- Upload a PNG, JPG, or WEBP file on the home page.
+- The app sends the image to the OpenAI API.
+- The model returns a self-contained HTML document that recreates the UI layout and styling.
 
-### 1) Download zip (no token required)
-- Click “Deploy to Vercel”.
-- Unzip the bundle.
-- Run:
+### 2. Generate HTML from a Prompt
+
+- Open the prompt workflow.
+- Describe the interface you want in natural language.
+- The app returns a full single-screen HTML/CSS UI.
+
+### 3. Refine the Result with AI
+
+- Submit follow-up prompts to update the generated HTML.
+- The app preserves the existing structure where possible and regenerates the full document.
+
+### 4. Export or Deploy
+
+- Download the generated HTML directly
+- Export a Vercel-ready zip bundle
+- Deploy through the Vercel API with a personal access token
+
+## Vercel Deployment Options
+
+### Download ZIP
+
+No token required.
+
+1. Click `Deploy to Vercel`
+2. Unzip the bundle
+3. Run:
 
 ```bash
 npx vercel
-# or
+```
+
+For production:
+
+```bash
 npx vercel --prod
 ```
 
-### 2) Deploy via API (optional token flow)
-- Paste a Vercel personal access token in the Deploy panel **or** set `VERCEL_TOKEN`.
-- Optionally set a project name.
-- Click “Deploy via API”.
-- The app will return a deployment URL.
+### Deploy via API
 
-### API token creation
+- Paste a Vercel personal access token into the deploy form, or set `VERCEL_TOKEN`
+- Optionally provide a project name
+- Click `Deploy via API`
+- The app returns a deployment URL
 
-Create a personal access token in Vercel:
-https://vercel.com/account/tokens
+Create a token here: [https://vercel.com/account/tokens](https://vercel.com/account/tokens)
+
+## Constraints
+
+- Supported image types: PNG, JPG, WEBP
+- Maximum image size: 10 MB
+- Maximum prompt length: 800 characters
 
 ## Notes
 
-- Tokens are used once per deploy and are not stored.
-- Generated HTML is self-contained (no external assets).
-- Max prompt length: 800 characters. Max image size: 10 MB.
+- Tokens are used only during deployment and are not stored
+- Generated HTML is self-contained for easy export and hosting
+- Deployment is optional; the main focus of the project is AI-assisted UI generation
